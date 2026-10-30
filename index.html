@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>MedCentral - ניהול רפואי אישי</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0071E3">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="MedCentral">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>try{const t=localStorage.getItem("medcentral_theme");if(t==="dark"||(!t&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}</script>
+<style>
+:root{--bg:#F5F5F7;--cd:#fff;--fg:#1D1D1F;--mu:#F2F2F7;--mf:#6E6E73;--bd:#D2D2D7;--pr:#0071E3;--ph:#0077ED;--ok:#059669;--wn:#d97706;--dg:#dc2626;--wb:#fffbeb;--ob:#ecfdf5;--gl:rgba(255,255,255,.88);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html.dark{--bg:#0D0D0E;--cd:#1C1C1E;--fg:#f3f4f6;--mu:#2C2C2E;--mf:#9ca3af;--bd:#2C2C2E;--wb:#2a2412;--ob:#0f2a22;--gl:rgba(28,28,30,.88);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%;touch-action:pan-x pan-y}
+body{font-family:Heebo,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg);transition:background-color .3s,color .3s}
+button,input,select,textarea{font-family:inherit}button{cursor:pointer}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:9999px}
+:focus-visible{outline:2px solid var(--pr);outline-offset:2px}
+.app{display:flex;height:100%;overflow:hidden}
+.side{position:fixed;inset:0 0 0 auto;z-index:50;width:288px;max-width:88vw;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-left:1px solid var(--bd);display:flex;flex-direction:column;transform:translateX(110%);transition:transform .3s ease-in-out;box-shadow:0 20px 40px rgba(0,0,0,.2)}.side.open{transform:none}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(4px);z-index:40}
+.brandrow{height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:12px;border:0;background:none;color:inherit;text-align:right}.brand b{display:block;font-size:16px}.brand small{font-size:12px;color:var(--mf);font-weight:500}
+.logo{width:36px;height:36px;border-radius:12px;background:var(--pr);color:#fff;display:grid;place-items:center;box-shadow:0 4px 10px rgba(59,130,246,.25)}
+.icon{border:0;background:none;color:inherit;width:40px;height:40px;border-radius:12px;font-size:20px}.icon:hover{background:var(--mu)}
+nav{flex:1;overflow:auto;padding:20px 16px}
+.cap{font-size:12px;font-weight:600;color:var(--mf);padding:0 12px;margin:0 0 8px}
+.nb{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;border:0;background:none;color:inherit;text-align:right;padding:10px 12px;border-radius:12px;font-size:14px;font-weight:500;margin-bottom:4px;transition:background .15s}
+.nb:hover{background:var(--mu)}.nb.on{background:var(--pr);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.1)}.nb.on .pill{background:rgba(255,255,255,.2);color:#fff}
+.nb .ic{width:20px;text-align:center;margin-left:12px}.nb.s{padding:8px 12px}
+.sub{margin-right:20px;padding-right:8px;border-right:1px solid var(--bd)}
+.chv{font-size:10px;color:var(--mf);transition:transform .2s}.chv.rot{transform:rotate(180deg)}
+.cloud{padding:0 12px 12px}.cloudbtn{width:100%;display:flex;gap:8px;justify-content:center;align-items:center;padding:10px;border:0;border-radius:12px;font-size:12px;font-weight:600;background:rgba(0,113,227,.1);color:var(--pr)}
+.ver{font-size:10px;color:var(--mf);text-align:center;margin:8px 0 0}
+.foot3{padding:12px;border-top:1px solid var(--bd);background:var(--mu);display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.foot3 button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:0;border-radius:12px;background:none;color:inherit;font-size:12px;font-weight:500}.foot3 i{font-size:16px}.foot3 button:hover{background:var(--cd)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{min-height:64px;display:flex;gap:10px;align-items:center;padding:8px 16px;background:var(--gl);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.top h1{margin:0;font-size:18px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search{flex:2;min-width:150px;max-width:320px}
+.content{flex:1;overflow:auto;padding:16px}
+.btn{border:0;border-radius:12px;height:38px;padding:0 16px;background:var(--pr);color:#fff;font-weight:500;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 2px rgba(0,0,0,.08);transition:background .15s}
+.btn:hover{background:var(--ph)}.btn.s{height:32px;font-size:12px;padding:0 12px}.btn.ok{background:var(--ok)}.btn.g{background:var(--mu);color:var(--mf);box-shadow:none}.btn.g:hover{background:var(--bd)}.btn.dg{background:#fee2e2;color:var(--dg)}.btn.wn{background:var(--wn)}
+body.edit #em{background:var(--wn);color:#fff}body:not(.edit) .dg{display:none!important}
+.card{background:var(--cd);border:1px solid rgba(210,210,215,.5);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.04)}html.dark .card{border-color:var(--bd)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.split{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.kpi b{font-size:26px;display:block}.kpi span{font-size:12px;color:var(--mf);font-weight:600}
+h2{font-size:16px;margin:14px 0 8px}h3{margin:0 0 8px;font-size:15px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{display:inline-block;background:var(--mu);color:var(--mf);border-radius:99px;padding:2px 8px;font-size:12px;font-weight:500}.pill.ok{background:#d1fae5;color:#047857}.pill.wn{background:#fef3c7;color:#92400e}
+.it{background:var(--mu);border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:8px;font-size:13px}.it.done{background:var(--ob);border-color:#a7f3d0}
+.mu{color:var(--mf);font-size:12px}
+.alert{background:#fef3c7;color:#78350f;border:1px solid #fcd34d;border-radius:12px;padding:12px;margin-bottom:12px;font-weight:600;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:9px;border-bottom:1px solid var(--bd);vertical-align:top}th{background:var(--mu);color:var(--mf)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bd);overflow:auto;margin:10px 0}
+.tab{border:0;background:none;padding:10px 12px;font-weight:600;font-size:13px;color:var(--mf);border-bottom:2px solid transparent;white-space:nowrap}.tab.on{color:var(--pr);border-color:var(--pr)}
+input,select,textarea{border:1px solid rgba(210,210,215,.6);background:rgba(242,242,247,.5);color:var(--fg);border-radius:12px;padding:10px 14px;font-size:14px;width:100%}
+html.dark input,html.dark select,html.dark textarea{background:rgba(44,44,46,.5);border-color:var(--bd)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pr)}textarea{min-height:70px;resize:vertical}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--mf)}
+.form{display:grid;gap:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:14px;z-index:60}
+.modal{background:var(--cd);width:min(560px,100%);max-height:90%;overflow:auto;border-radius:16px;padding:16px;box-shadow:0 25px 50px rgba(0,0,0,.25);border:1px solid var(--bd)}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);border-radius:12px;padding:10px 16px;font-weight:600;z-index:70}
+.hide{display:none!important}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.day{min-height:70px;border:1px solid var(--bd);border-radius:10px;padding:4px;font-size:11px}.day.t{border-color:var(--pr);background:var(--mu)}.day.e{border:0}
+.ev{display:block;width:100%;margin-top:3px;border:0;border-radius:4px;background:var(--pr);color:#fff;font-size:10px;font-weight:600;padding:2px;text-align:right;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.ev.p{background:var(--mu);color:var(--mf)}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.split{grid-template-columns:1fr}.two{grid-template-columns:1fr}.top h1{font-size:16px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.side,.top,.btn,.tabs{display:none!important}.app,.content{display:block;overflow:visible}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side" id="side" aria-label="תפריט ראשי">
+ <div class="brandrow"><button class="brand" data-a="go" data-p="dashboard" aria-label="לדשבורד הראשי"><span class="logo"><i class="fa-solid fa-heart-pulse"></i></span><span><b>MedCentral</b><small>ניהול רפואי אישי</small></span></button><button class="icon" data-a="side" data-p="0" aria-label="סגור תפריט"><i class="fa-solid fa-xmark"></i></button></div>
+ <nav id="nav"></nav>
+ <div class="cloud"><button class="cloudbtn" data-a="gd"><i class="fa-solid fa-cloud"></i><span id="cl">התחבר לסנכרון (Google)</span></button><p class="ver">גרסה 1.0</p></div>
+ <div class="foot3"><button data-a="dm"><i id="dmi" class="fa-solid fa-moon"></i><span id="dml">מצב כהה</span></button><button data-a="bk" style="color:var(--pr)"><i class="fa-solid fa-download"></i><span>גיבוי</span></button><button data-a="bk" style="color:var(--ok)"><i class="fa-solid fa-upload"></i><span>שחזור</span></button></div>
+</aside>
+<div id="scrim" class="scrim hide" data-a="side" data-p="0"></div>
+<main class="main">
+ <header class="top">
+  <button class="icon" data-a="side" data-p="1" aria-label="פתח תפריט"><i class="fa-solid fa-bars"></i></button>
+  <h1 id="title"></h1>
+  <input id="q" class="search" type="search" placeholder="חיפוש תור, רופא, תרופה, מסמך…" aria-label="חיפוש">
+  <button class="btn g" id="em" data-a="em"><i class="fa-solid fa-pen"></i> עריכה</button>
+  <button class="btn" data-a="nt"><i class="fa-solid fa-plus"></i> תיק רפואי</button>
+ </header>
+ <div class="content" id="view"></div>
+</main>
+</div>
+<div id="modal"></div><div id="toast" class="toast hide"></div>
+<script>
+const KEY="medcentral-html-v1",$=s=>document.querySelector(s),pad=n=>String(n).padStart(2,"0");
+const KINDS={specialist:"רופא מומחה",family:"רופא משפחה",imaging:"מכון הדמיה (MRI, רנטגן, ממוגרפיה)",lab:"בדיקות דם"};
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const today=()=>iso(new Date()),nowT=()=>{const d=new Date();return pad(d.getHours())+":"+pad(d.getMinutes())};
+const pd=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const add=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const he=s=>s?pd(s).toLocaleDateString("he-IL"):"";
+const heL=s=>s?pd(s).toLocaleDateString("he-IL",{day:"numeric",month:"long",year:"numeric"}):"";
+const daysTo=d=>Math.round((pd(d)-pd(today()))/864e5);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const kind=k=>KINDS[k]||"תור / בדיקה";
+const upc=(d,t)=>d>today()||(d===today()&&(t||"00:00")>=nowT());
+const when=d=>{const n=daysTo(d);return n===0?"היום":n===1?"מחר":n>1?"בעוד "+n+" ימים":"לפני "+(-n)+" ימים"};
+const uid=()=>Math.random().toString(36).slice(2,10);
+const cyc=cs=>{const t=today();let fut=false;for(const c of cs||[]){if(c.start&&c.start>t){fut=true;continue}if(!c.end||c.end>=t)return{on:1,l:c.end?"פעיל · נותרו "+(daysTo(c.end)+1)+" ימים":"פעיל (ללא הגבלה)"}}return fut?{on:0,l:"טרם החל"}:{on:0,l:"הסבב הסתיים"}};
+const D=",ד״ר ";
+function seed(){return{view:"dashboard",tid:null,tab:"h",cal:null,filter:"all",taken:{},meds:[],vitals:[{id:"v1",type:"לחץ דם",value:"120/80",date:add(-5),time:"09:00"}],topics:[
+{id:"knee",icon:"🦵",name:"כאבים ברגל ימין",appointments:[
+{id:"k1",kind:"specialist",doctor:"ד״ר אברהם לוי (אורתופד)",date:add(5),time:"10:30",location:"מרפאת מומחים, נתניה",preparation:"להגיע בצום של 8 שעות ולהביא צילומים קודמים",summary:"",notes:"להכין שאלות על הכאב בהליכה",files:[]},
+{id:"k2",kind:"lab",doctor:"מכון בדיקות דם",date:add(-40),time:"08:00",location:"",preparation:"צום של 8 שעות",summary:"מדדי הדלקת ירדו לנורמה.",notes:"",files:[{id:"f1",name:"תוצאות_בדיקות_דם.pdf",size:"1.2 MB"}]}],
+prescriptions:[{id:"p1",name:"אתופן 400mg",dosage:"כדור אחד ביום לאחר אוכל",doctor:"ד״ר לוי",cycles:[{id:"c1",start:add(-10),end:add(14)}]}],docs:[],notes:[{id:"n1",date:add(-3),text:"נפיחות קלה באזור הברך בערב."}]},
+{id:"eye",icon:"👁️",name:"מעקב עיניים",appointments:[{id:"e1",kind:"specialist",doctor:"ד״ר כהן (עיניים)",date:add(18),time:"11:00",location:"תל אביב",preparation:"להביא טופס 17 חתום",summary:"",notes:"",files:[]}],prescriptions:[{id:"p2",name:"טיפות הילו-קומוד",dosage:"3 פעמים ביום",doctor:"ד״ר כהן",cycles:[{id:"c2",start:add(-30),end:add(30)}]}],docs:[],notes:[]}]}}
+let S=load();
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.topics)return Object.assign(seed(),r)}catch(e){}return seed()}
+function save(){S.upd=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("לא ניתן לשמור: האחסון מלא או חסום")}window.drive&&drive.push()}
+const T=id=>S.topics.find(t=>t.id===id);
+let DB;const dbp=new Promise(r=>{try{const q=indexedDB.open("mc-files",1);q.onupgradeneeded=()=>q.result.createObjectStore("f");q.onsuccess=()=>{DB=q.result;r()};q.onerror=()=>r()}catch(e){r()}});
+const fput=(id,b)=>new Promise(r=>{if(!DB)return r(0);try{const x=DB.transaction("f","readwrite");x.objectStore("f").put(b,id);x.oncomplete=()=>r(1);x.onerror=x.onabort=()=>r(0)}catch(e){r(0)}});
+const fget=id=>new Promise(r=>{if(!DB)return r(null);try{const q=DB.transaction("f").objectStore("f").get(id);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}catch(e){r(null)}});
+const fdel=id=>{try{DB&&DB.transaction("f","readwrite").objectStore("f").delete(id)}catch(e){}};
+async function keep(x){await dbp;const id=uid();if(!await fput(id,x))toast("תוכן הקובץ לא נשמר: אין מקום או שהאחסון חסום");return id}
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.add("hide"),2200)}
+const B=(a,l,c,p,q)=>`<button class="btn ${c||""}" data-a="${a}" data-p="${esc(p??"")}" data-q="${esc(q??"")}">${l}</button>`;
+const F=(l,id,v,t,ph)=>`<label class="f">${l}<input id="${id}" type="${t||"text"}" value="${esc(v)}" placeholder="${esc(ph)}"></label>`;
+const V=id=>$("#"+id).value.trim();
+const ups=()=>S.topics.flatMap(t=>t.appointments.filter(a=>upc(a.date,a.time)).map(a=>({t,a}))).sort((x,y)=>(x.a.date+x.a.time).localeCompare(y.a.date+y.a.time));
+function docsOf(t){const m=new Map();t.appointments.forEach(a=>a.files.forEach(f=>m.set(f.name,{id:f.id,title:f.name,date:a.date,type:"מתוך בדיקה",src:a.doctor,topic:t.name,tid:t.id})));t.docs.forEach(d=>{if(!m.has(d.title))m.set(d.title,{...d,topic:t.name,tid:t.id})});return[...m.values()].sort((a,b)=>b.date.localeCompare(a.date))}
+function medsToday(){const m=new Map();S.topics.forEach(t=>t.prescriptions.forEach(p=>{if(cyc(p.cycles).on&&!m.has(p.name))m.set(p.name,{name:p.name,dosage:p.dosage,topic:t.name})}));S.meds.forEach(p=>{if(!m.has(p.name))m.set(p.name,{...p,topic:"אישי"})});return[...m.values()].map(x=>({...x,taken:!!S.taken[today()+"|"+x.name]}))}
+const empty=t=>`<p class="mu">${t}</p>`;
+const apptCard=({t,a},full)=>`<div class="it"><div class="row"><div><span class="pill">${kind(a.kind)}</span> <span class="pill ${upc(a.date,a.time)&&daysTo(a.date)<=1?"wn":""}">${when(a.date)}</span><div><b>${full?esc(t.name)+" · ":""}${esc(a.doctor)}</b></div>${a.location?`<div class="mu">📍 ${esc(a.location)}</div>`:""}</div><b>${he(a.date)} · ${a.time||""}</b></div>${a.preparation?`<div class="mu" style="margin-top:6px">⚠️ הכנה: ${esc(a.preparation)}</div>`:""}<div style="margin-top:8px">${B("oa","פרטים / עריכה","s",t.id,a.id)}</div></div>`;
+function dash(){const u=ups(),m=medsToday(),soon=u.filter(x=>daysTo(x.a.date)<=1),rx=S.topics.flatMap(t=>t.prescriptions.map(p=>({t,p,e:p.cycles.filter(c=>c.end&&c.end>=today()&&(!c.start||c.start<=today())).map(c=>c.end).sort().pop()}))).filter(x=>x.e&&daysTo(x.e)<=3);
+const notes=S.topics.flatMap(t=>t.notes.map(n=>({...n,t}))).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4);
+return(rx.length?`<div class="alert">💊 ${rx.map(x=>`${esc(x.p.name)} מסתיימת ${when(x.e)} — כדאי לחדש מרשם ${B("cy","+ סבב חדש","g s",x.t.id,x.p.id)}`).join("<br>")}</div>`:"")+(soon.length?`<div class="alert">🔔 ${soon.map(x=>`${when(x.a.date)} ${x.a.time}: ${esc(x.a.doctor)}${x.a.preparation?" — "+esc(x.a.preparation):""}`).join("<br>")}</div>`:"")+
+`<div class="g4"><div class="card kpi"><span>תיקים רפואיים</span><b>${S.topics.length}</b></div><div class="card kpi"><span>תורים קרובים</span><b>${u.length}</b></div><div class="card kpi"><span>תרופות היום (נלקחו)</span><b>${m.filter(x=>x.taken).length}/${m.length}</b></div><div class="card kpi"><span>מדדים שנרשמו</span><b>${S.vitals.length}</b></div></div>
+<div class="split"><div><div class="card"><div class="row"><h3>התורים הקרובים שלי</h3>${B("na","+ תור חדש","s")}</div>${u.map(x=>apptCard(x,1)).join("")||empty("אין תורים מתוכננים. לחצו על ״תור חדש״ כדי להוסיף.")}</div>
+<div class="card"><h3>הפתקים האחרונים</h3>${notes.map(n=>`<div class="it"><b>${he(n.date)}</b> · ${esc(n.t.name)}<div>${esc(n.text)}</div></div>`).join("")||empty("אין פתקים")}</div></div>
+<div><div class="card"><div class="row"><h3>תרופות להיום</h3>${B("qm","+ כדור","ok s")}</div>${m.map(x=>`<button class="it row ${x.taken?"done":""}" style="width:100%;text-align:right" data-a="tm" data-p="${esc(x.name)}"><span><b style="${x.taken?"text-decoration:line-through":""}">${esc(x.name)}</b><div class="mu">${esc(x.dosage)} · ${esc(x.topic)}</div></span><span style="font-size:20px">${x.taken?"✅":"⬜"}</span></button>`).join("")||empty("אין תרופות פעילות")}</div>
+<div class="card"><h3>התיקים שלי</h3>${S.topics.map(t=>`<button class="it row" style="width:100%;text-align:right" data-a="go" data-p="topic" data-q="${t.id}"><b>${esc(t.icon)} ${esc(t.name)}</b><span class="pill">${t.appointments.length} תורים</span></button>`).join("")}</div></div></div>`}
+function medsV(){const rows=[];S.topics.forEach(t=>t.prescriptions.forEach(p=>rows.push({...p,topic:t.name,tid:t.id})));S.meds.forEach(m=>rows.push({id:m.id,name:m.name,dosage:m.dosage,doctor:"אישי",cycles:[],topic:"אישי",tid:null,q:1}));
+const f=S.filter,sh=rows.filter(r=>f==="all"||(f==="active")===(r.q?true:!!cyc(r.cycles).on));
+return`<div class="card"><div class="row"><h3>תרופות ומרשמים</h3>${B("rx","+ הוספת מרשם","ok")}</div><div style="display:flex;gap:6px;margin:10px 0;flex-wrap:wrap">${[["all","הכל"],["active","פעילות"],["ended","הסתיימו"]].map(([i,l])=>B("flt",l,f===i?"s":"g s",i)).join("")}</div>
+<div style="overflow:auto"><table><tr><th>תרופה</th><th>תיק / רופא</th><th>סבבים</th><th>סטטוס</th><th></th></tr>${sh.map(p=>{const c=p.q?{on:1,l:"נטילה לפי צורך"}:cyc(p.cycles);return`<tr><td><b>${esc(p.name)}</b><div class="mu">${esc(p.dosage)}</div></td><td>${esc(p.topic)}<div class="mu">${esc(p.doctor)}</div></td><td>${p.cycles.map(x=>`<div class="mu">${he(x.start)||"מיידי"} – ${he(x.end)||"ללא הגבלה"}</div>`).join("")}</td><td><span class="pill ${c.on?"ok":""}">${c.l}</span></td><td style="white-space:nowrap">${p.q?"":B("cy","+ סבב","g s",p.tid,p.id)} ${B("dr","מחק","dg s",p.tid||"",p.id)}</td></tr>`}).join("")||`<tr><td colspan="5">אין תרופות</td></tr>`}</table></div></div>`}
+function calV(){const base=S.cal||today().slice(0,7)+"-01",[y,m]=base.split("-").map(Number),st=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate();
+const mo=["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
+let c=Array.from({length:st},()=>`<div class="day e"></div>`);
+for(let d=1;d<=n;d++){const i=y+"-"+pad(m)+"-"+pad(d),ev=S.topics.flatMap(t=>t.appointments.filter(a=>a.date===i).map(a=>({t,a})));
+c.push(`<div class="day ${i===today()?"t":""}"><b>${d}</b>${ev.slice(0,2).map(e=>`<button class="ev ${upc(e.a.date,e.a.time)?"":"p"}" data-a="oa" data-p="${e.t.id}" data-q="${e.a.id}">${e.a.time} ${esc(e.t.name)}</button>`).join("")}${ev.length>2?`<div class="mu">+${ev.length-2} נוספים</div>`:""}</div>`)}
+return`<div class="card"><div class="row"><h3>${mo[m-1]} ${y}</h3><div>${B("cm","▶ הקודם","g s",-1)} ${B("cm","היום","g s",0)} ${B("cm","הבא ◀","g s",1)}</div></div><div class="cal" style="margin:10px 0 6px;font-weight:800;color:var(--mf);text-align:center">${["א","ב","ג","ד","ה","ו","ש"].map(w=>`<div>${w}</div>`).join("")}</div><div class="cal">${c.join("")}</div></div>`}
+function vitV(){return`<div class="card"><h3>מעקב מדדים</h3><div class="g4">${F("סוג המדד","v0","","text","לחץ דם, סוכר, משקל…")}${F("ערך","v1","","text","120/80")}${F("תאריך","v2",today(),"date")}${F("שעה","v3",nowT(),"time")}</div>${B("av","הוסף מדד")}
+<div style="margin-top:12px">${vcharts()}${S.vitals.map(v=>`<div class="it row"><div><b>${esc(v.type)}</b><div class="mu">${he(v.date)} ${v.time}</div></div><span><span class="pill">${esc(v.value)}</span> ${B("dv","מחק","dg s",v.id)}</span></div>`).join("")||empty("אין מדדים")}</div></div>`}
+function notesV(){const ts=S.topics.filter(t=>t.notes.length);return`<div class="g3">${ts.map(t=>`<div class="card"><div class="row"><b>${esc(t.name)}</b>${B("go","פתח","g s","topic",t.id)}</div>${t.notes.map(n=>`<div class="it"><b>${he(n.date)}</b> ${esc(n.text)}</div>`).join("")}</div>`).join("")}</div>${ts.length?"":empty("אין פתקים. אפשר להוסיף יומן תסמינים בתוך כל תיק רפואי.")}`}
+function docsV(){const all=S.topics.flatMap(docsOf).sort((a,b)=>b.date.localeCompare(a.date));return`<div class="card"><h3>${all.length} מסמכים</h3>${all.map(d=>`<div class="it row"><div><b>${esc(d.title)}</b><div class="mu">${heL(d.date)} · ${esc(d.topic)}${d.src?" · "+esc(d.src):""}</div></div><span class="pill">${esc(d.type)}</span></div>`).join("")||empty("אין מסמכים")}<p class="mu">שימו לב: נשמר שם הקובץ בלבד, לא תוכנו. את הקובץ עצמו כדאי לשמור בנפרד.</p></div>`}
+function topicV(){const t=T(S.tid);if(!t)return dash();const tab=S.tab||"h";let b="";
+if(tab==="h")b=`<div class="row"><span class="mu">תורים ובדיקות</span>${B("na","+ תור חדש","s",t.id)}</div>`+[...t.appointments].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>apptCard({t,a})).join("")||empty("אין תורים");
+else if(tab==="r")b=`<div class="row"><span></span>${B("rx","+ מרשם","ok s",t.id)}</div>`+(t.prescriptions.map(p=>`<div class="it done"><div class="row"><b>${esc(p.name)}</b>${B("dr","מחק","dg s",t.id,p.id)}</div>${esc(p.dosage)} · ${esc(p.doctor)}<div class="mu">${p.cycles.map(c=>he(c.start||"")+" – "+(he(c.end)||"ללא הגבלה")).join(" | ")}</div></div>`).join("")||empty("אין מרשמים"));
+else if(tab==="d")b=`<div class="row"><span class="mu">מסמכים וצילומים</span><span><label class="btn s">העלה קובץ<input type="file" hidden data-c="doc" data-p="${t.id}"></label> <label class="btn ok s">צלם<input type="file" accept="image/*" capture="environment" hidden data-c="doc" data-p="${t.id}"></label></span></div>`+(docsOf(t).map(docRow).join("")||empty("לא צורפו מסמכים"));
+else b=`<div class="row" style="flex-wrap:nowrap"><input id="nt" placeholder="תארו את התסמין…">${B("an","שמור","",t.id)}</div><div style="margin-top:8px">`+(t.notes.map(n=>`<div class="it row"><span><b>${he(n.date)}</b> ${esc(n.text)}</span>${B("dn","מחק","dg s",t.id,n.id)}</div>`).join("")||empty("אין פתקים"))+"</div>";
+return`<div class="card"><div class="row"><div><h2 style="margin:0">${esc(t.icon)} ${esc(t.name)}</h2></div><div>${B("pr","הדפסת דוח לרופא","ok s")} ${B("dt","מחיקת התיק","dg s",t.id)}</div></div><div class="tabs">${[["h","תורים ובדיקות"],["r","מרשמים"],["d","מסמכים"],["n","יומן תסמינים"]].map(([i,l])=>`<button class="tab ${tab===i?"on":""}" data-a="tab" data-p="${i}">${l}</button>`).join("")}</div>${b}</div>`}
+function search(){const q=$("#q").value.trim().toLowerCase();if(!q)return"";const h=[],has=(...x)=>x.join(" ").toLowerCase().includes(q);
+S.topics.forEach(t=>{if(has(t.name))h.push(["תיק",t.name,"go","topic",t.id]);t.appointments.forEach(a=>{if(has(a.doctor,a.summary,a.notes,kind(a.kind),a.location))h.push(["תור",kind(a.kind)+" — "+a.doctor,"oa",t.id,a.id])});t.prescriptions.forEach(p=>{if(has(p.name,p.doctor))h.push(["מרשם",p.name+" ("+t.name+")","go","meds"])});t.notes.forEach(n=>{if(has(n.text))h.push(["פתק",n.text,"go","topic",t.id])});docsOf(t).forEach(d=>{if(has(d.title))h.push(["מסמך",d.title,"go","topic",t.id])})});
+return`<div class="card"><b>תוצאות חיפוש (${h.length})</b>${h.map(x=>`<button class="it row" style="width:100%;text-align:right" data-a="${x[2]}" data-p="${esc(x[3])}" data-q="${esc(x[4]||"")}"><span><b>[${x[0]}]</b> ${esc(x[1])}</span></button>`).join("")||empty("לא נמצאו תוצאות")}</div>`}
+const TT={dashboard:"דשבורד ראשי",meds:"תרופות ומרשמים",cal:"לוח זמנים",vitals:"מדדים",notes:"פתקים ויומן תסמינים",docs:"כל המסמכים"};
+const NI={dashboard:"chart-pie",meds:"pills",cal:"calendar-days",vitals:"heart-pulse",notes:"note-sticky",docs:"folder-open"};let setOpen=false;
+const sb=(a,i,l)=>`<button class="nb s" data-a="${a}"><span><i class="fa-solid fa-${i} ic" style="color:var(--pr)"></i>${l}</span></button>`;
+function render(){$("#nav").innerHTML=`<p class="cap">סקירה כללית</p>`+Object.entries(TT).map(([i,l])=>`<button class="nb ${S.view===i?"on":""}" data-a="go" data-p="${i}"><span><i class="fa-solid fa-${NI[i]} ic"></i>${l}</span></button>`).join("")+`<button class="nb" data-a="sm" aria-expanded="${setOpen}"><span><i class="fa-solid fa-gear ic" style="color:var(--pr)"></i>הגדרות</span><i class="fa-solid fa-chevron-down chv ${setOpen?"rot":""}"></i></button><div class="sub ${setOpen?"":"hide"}">${sb("gd","cloud","Google Drive")}${sb("bk","download","גיבוי ושחזור")}${sb("notif","bell","תזכורות לתורים")}</div><div class="row" style="margin-top:16px"><p class="cap" style="margin:0">תיקים רפואיים</p><span class="pill">${S.topics.length}</span></div>`+S.topics.map(t=>`<button class="nb ${S.view==="topic"&&S.tid===t.id?"on":""}" data-a="go" data-p="topic" data-q="${t.id}"><span>${esc(t.icon)} ${esc(t.name)}</span><span class="pill">${t.appointments.length}</span></button>`).join("");
+$("#cl").textContent=window.drive&&drive.on()?"מחובר ל-Google Drive":"התחבר לסנכרון (Google)";
+const t=S.view==="topic"?T(S.tid):null;$("#title").textContent=t?t.name:TT[S.view]||"MedCentral";
+const M={dashboard:dash,meds:medsV,cal:calV,vitals:vitV,notes:notesV,docs:docsV,topic:topicV};$("#view").innerHTML=search()+(M[S.view]||dash)()}
+function modal(h){$("#modal").innerHTML=`<div class="ov" data-a="cl" data-e="1"><div class="modal">${h}</div></div>`}
+function head(t){return`<div class="row" style="margin-bottom:10px"><h3 style="margin:0">${t}</h3>${B("cl","סגור","g s")}</div>`}
+const sel=(id,arr,cur)=>`<select id="${id}">${arr.map(([v,l])=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`).join("")}</select>`;
+const A={};
+A.go=(v,p)=>{if(v==="topic"){S.view="topic";S.tid=p}else{S.view=v;S.tid=null}$("#q").value="";side(0);save();render()};
+function side(o){$("#side").classList.toggle("open",!!+o);$("#scrim").classList.toggle("hide",!+o)}
+A.side=p=>side(p);A.tab=p=>{S.tab=p;render()};A.flt=p=>{S.filter=p;render()};
+A.cm=p=>{const b=S.cal||today().slice(0,7)+"-01",[y,m]=b.split("-").map(Number);const d=+p?new Date(y,m-1+ +p,1):new Date();S.cal=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-01";render()};
+A.cl=(p,q,b,e)=>{if(b.dataset.e&&e.target!==b)return;$("#modal").innerHTML="";render()};
+A.pr=()=>window.print();
+A.tm=n=>{const k=today()+"|"+n;S.taken[k]=!S.taken[k];save();render()};
+A.qm=()=>modal(head("הוספת כדור")+`<div class="form">${F("שם","qn","")}${F("מינון","qd","","text","לפי צורך")}${B("sq","שמור","ok")}</div>`);
+A.sq=()=>{const n=V("qn");if(!n)return toast("נא להזין שם");S.meds.unshift({id:uid(),name:n,dosage:V("qd")||"לפי צורך"});save();A.cl();toast("התרופה נוספה")};
+A.nt=()=>modal(head("תיק רפואי חדש")+`<div class="form">${F("שם התיק","tn","","text","למשל: כאבים בכתף")}${B("st","הוסף תיק")}</div>`);
+A.st=()=>{const n=V("tn");if(!n)return toast("נא להזין שם");const t={id:uid(),icon:"📁",name:n,appointments:[],prescriptions:[],docs:[],notes:[]};S.topics.push(t);S.view="topic";S.tid=t.id;S.tab="h";save();A.cl();toast("התיק נוסף")};
+A.na=p=>A.oa(p||"",null);
+A.oa=(tid,aid)=>{const a=aid?T(tid).appointments.find(x=>x.id===aid):{kind:"specialist",doctor:"",date:today(),time:"09:00",location:"",preparation:"",summary:"",notes:"",files:[]};
+const tp=tid?"":`<label class="f">תיק${sel("m_t",S.topics.map(t=>[t.id,t.name]),S.tid)}</label>`;
+modal(head(aid?"פרטי התור / הבדיקה":"תור חדש")+`<div class="form">${tp}<label class="f">סוג${sel("m_k",Object.entries(KINDS),a.kind)}</label>${F("רופא / מכון","m_d",a.doctor)}<div class="two">${F("תאריך","m_dt",a.date,"date")}${F("שעה","m_tm",a.time,"time")}</div>${F("כתובת","m_l",a.location)}${F("הכנות (צום, טופס 17…)","m_p",a.preparation)}<label class="f">סיכום הבדיקה<textarea id="m_s">${esc(a.summary)}</textarea></label><label class="f">פתקים<textarea id="m_n">${esc(a.notes)}</textarea></label>
+${aid?`<div><b>מסמכים</b> <label class="btn s">צרף קובץ<input type="file" hidden data-c="att" data-p="${tid}" data-q="${aid}"></label>${a.files.map(f=>`<div class="it row"><span>${esc(f.name)} <span class="mu">${esc(f.size)}</span></span>${B("vf","פתח","g s",f.id)}</div>`).join("")}</div>`:""}
+<div class="row">${B("sa","שמור","ok",tid,aid)}${aid?B("da","מחק תור","dg s",tid,aid):""}</div></div>`)};
+A.sa=(tid,aid)=>{tid=tid||$("#m_t").value;const d=V("m_d");if(!d||!$("#m_dt").value)return toast("נא למלא רופא ותאריך");const t=T(tid);let a=aid?t.appointments.find(x=>x.id===aid):{id:uid(),files:[]};
+Object.assign(a,{kind:$("#m_k").value,doctor:d,date:$("#m_dt").value,time:$("#m_tm").value,location:V("m_l"),preparation:V("m_p"),summary:V("m_s"),notes:V("m_n")});if(!aid)t.appointments.push(a);save();A.cl();toast("התור נשמר")};
+A.rx=tid=>{const tp=tid?"":`<label class="f">תיק${sel("r_t",S.topics.map(t=>[t.id,t.name]),S.tid)}</label>`;modal(head("הוספת מרשם")+`<div class="form">${tp}${F("שם התרופה","r_n","")}${F("מינון","r_d","")}${F("רופא","r_r","")}<div class="two">${F("התחלה","r_s",today(),"date")}${F("סיום","r_e","","date")}</div>${B("sr","שמור","ok",tid)}</div>`)};
+A.sr=tid=>{tid=tid||$("#r_t").value;const n=V("r_n");if(!n)return toast("נא להזין שם תרופה");if(V("r_e")&&V("r_s")&&V("r_e")<V("r_s"))return toast("תאריך הסיום מוקדם מההתחלה");T(tid).prescriptions.unshift({id:uid(),name:n,dosage:V("r_d")||"לפי הנחיה",doctor:V("r_r")||"לא צוין",cycles:[{id:uid(),start:V("r_s"),end:V("r_e")}]});save();A.cl();toast("המרשם נוסף")};
+A.cy=(tid,pid)=>modal(head("סבב נטילה חדש")+`<div class="two">${F("התחלה","y_s",today(),"date")}${F("סיום","y_e","","date")}</div><div style="margin-top:10px">${B("sy","שמור","",tid,pid)}</div>`);
+A.sy=(tid,pid)=>{T(tid).prescriptions.find(p=>p.id===pid).cycles.push({id:uid(),start:V("y_s"),end:V("y_e")});save();A.cl();toast("סבב נוסף")};
+A.av=()=>{const t=V("v0"),v=V("v1");if(!t||!v)return toast("נא למלא סוג וערך");S.vitals.unshift({id:uid(),type:t,value:v,date:$("#v2").value||today(),time:$("#v3").value||nowT()});save();render();toast("המדד נשמר")};
+A.an=tid=>{const x=V("nt");if(!x)return;T(tid).notes.unshift({id:uid(),date:today(),text:x});save();render();toast("הפתק נשמר")};
+function arm(b){if(b.dataset.arm){return true}b.dataset.arm=1;const o=b.textContent;b.textContent="לחצו שוב לאישור";setTimeout(()=>{delete b.dataset.arm;b.textContent=o},3000);return false}
+const D2=(f)=>(p,q,b)=>{if(arm(b)){f(p,q);save();A.cl();toast("נמחק")}};
+A.da=D2((t,a)=>{const x=T(t);x.appointments=x.appointments.filter(i=>i.id!==a)});
+A.dr=D2((t,p)=>{if(t){const x=T(t);x.prescriptions=x.prescriptions.filter(i=>i.id!==p)}else S.meds=S.meds.filter(i=>i.id!==p)});
+A.dn=D2((t,n)=>{const x=T(t);x.notes=x.notes.filter(i=>i.id!==n)});
+A.dv=D2((p)=>{S.vitals=S.vitals.filter(i=>i.id!==p)});
+A.dt=D2((t)=>{S.topics=S.topics.filter(i=>i.id!==t);S.view="dashboard";S.tid=null});
+A.bk=()=>modal(head("גיבוי ושחזור")+`<p class="mu">לגיבוי: העתיקו את הטקסט ושמרו אותו בקובץ או בהודעה לעצמכם. לשחזור: הדביקו טקסט גיבוי (גם מהגרסה הישנה) ולחצו ״שחזר״. השחזור מחליף את הנתונים הנוכחיים.</p><textarea id="bj" style="min-height:200px;direction:ltr">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:10px">${B("bc","העתק גיבוי","ok")}${B("br","שחזר מהטקסט","wn")}</div>`);
+A.bc=()=>{const e=$("#bj");e.select();try{document.execCommand("copy");toast("הועתק")}catch(x){toast("סמנו והעתיקו ידנית")}};
+A.br=(p,q,b)=>{if(!arm(b))return;try{const r=JSON.parse($("#bj").value);if(!r.topics)throw 0;S=Object.assign(seed(),r);save();A.cl();toast("הנתונים שוחזרו")}catch(e){toast("הטקסט אינו גיבוי תקין")}};
+A.notif=async()=>{if(!("Notification"in window))return toast("הדפדפן לא תומך בהתראות");const r=await Notification.requestPermission();if(r!=="granted")return toast("ההתראות לא אושרו");toast("תוזכרו כשהאפליקציה פתוחה");remind()};
+function remind(){if(!("Notification"in window)||Notification.permission!=="granted")return;ups().filter(x=>daysTo(x.a.date)<=1).forEach(x=>{try{new Notification("תזכורת: "+when(x.a.date)+" "+x.a.time,{body:x.a.doctor+(x.a.preparation?" — "+x.a.preparation:"")})}catch(e){}})}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||!A[b.dataset.a])return;A[b.dataset.a](b.dataset.p,b.dataset.q,b,e)});
+document.addEventListener("change",async e=>{const i=e.target;if(!i.dataset.c||!i.files.length)return;const f=[...i.files],t=T(i.dataset.p);
+if(i.dataset.c==="doc"){for(const x of f){const id=await keep(x);t.docs.unshift({id,title:x.name,date:today(),type:x.type.startsWith("image/")?"צילום":"קובץ",size:(x.size/1024).toFixed(1)+" KB"})}save();render();toast("הקובץ נשמר במכשיר")}
+else{const a=t.appointments.find(x=>x.id===i.dataset.q);for(const x of f){const id=await keep(x);a.files.push({id,name:x.name,size:(x.size/1024).toFixed(1)+" KB"})}save();A.oa(i.dataset.p,i.dataset.q);toast("הקובץ נשמר במכשיר")}window.drive&&drive.sync(1)});
+$("#q").addEventListener("input",render);
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#modal").innerHTML)A.cl()});
+const docRow=d=>`<div class="it row"><div><b>${esc(d.title)}</b><div class="mu">${heL(d.date)}${d.src?" · "+esc(d.src):""}${d.size?" · "+esc(d.size):""}</div></div><span>${B("vf","פתח","s",d.id)} ${B("dd","מחק","dg s",d.tid,d.id)}</span></div>`;
+function docsV(){const all=S.topics.flatMap(docsOf).sort((a,b)=>b.date.localeCompare(a.date)||a.topic.localeCompare(b.topic,"he"));const g=[];all.forEach(d=>{let x=g.find(i=>i.d===d.date);if(!x)g.push(x={d:d.date,a:[]});x.a.push(d)});
+return`<div class="card"><h3>${all.length} מסמכים</h3>${g.map(x=>`<div style="margin-bottom:12px"><b style="color:var(--pr)">${heL(x.d)}</b>${x.a.map(d=>`<div class="mu" style="margin-top:6px">${esc(d.topic)}</div>${docRow(d)}`).join("")}</div>`).join("")||empty("אין מסמכים")}<p class="mu">הקבצים נשמרים בזיכרון הדפדפן במכשיר הזה.</p></div>`}
+A.vf=async id=>{await dbp;const b=await fget(id)||(window.drive&&await drive.get(id));if(!b)return toast("תוכן הקובץ לא נמצא במכשיר הזה");const u=URL.createObjectURL(b),t=b.type||"";modal(head("תצוגת קובץ")+(t.startsWith("image/")?`<img src="${u}" style="max-width:100%">`:t==="application/pdf"?`<iframe src="${u}" style="width:100%;height:70vh;border:0"></iframe>`:"")+`<p><a href="${u}" target="_blank" rel="noopener">פתיחה בלשונית חדשה</a></p>`)};
+A.dd=D2((t,id)=>{window.drive&&drive.del(id);const x=T(t);x.docs=x.docs.filter(i=>i.id!==id);x.appointments.forEach(a=>a.files=a.files.filter(f=>f.id!==id));fdel(id)});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+function vchart(type,list){const p=[...list].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(v=>({n:(v.value.match(/-?\d+(\.\d+)?/g)||[]).map(Number),l:he(v.date)})).filter(x=>x.n.length);if(p.length<2)return"";
+const two=p.every(x=>x.n.length>1),ss=two?[0,1]:[0],all=p.flatMap(x=>ss.map(i=>x.n[i])),lo=Math.min(...all),r=(Math.max(...all)-lo)||1,W=300,H=110,X=i=>10+i*(W-20)/(p.length-1),Y=v=>H-14-(v-lo)/r*(H-34);
+return`<div class="it"><b>${esc(type)}</b> <span class="mu">${two?"(עליון כחול, תחתון כתום)":""}</span><svg viewBox="0 0 ${W} ${H}" style="width:100%;direction:ltr">${ss.map((s,k)=>{const c=k?"#d97706":"#2563eb";return`<polyline fill="none" stroke="${c}" stroke-width="2" points="${p.map((x,i)=>X(i)+","+Y(x.n[s])).join(" ")}"/>`+p.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x.n[s])}" r="3" fill="${c}"/><text x="${X(i)}" y="${Y(x.n[s])-6}" font-size="9" text-anchor="middle" fill="currentColor">${x.n[s]}</text>`).join("")}).join("")}<text x="10" y="${H-1}" font-size="9" fill="currentColor">${p[0].l}</text><text x="${W-10}" y="${H-1}" font-size="9" text-anchor="end" fill="currentColor">${p[p.length-1].l}</text></svg></div>`}
+const vcharts=()=>{const g={};S.vitals.forEach(v=>{const k=v.type.trim().toLowerCase();(g[k]=g[k]||[]).push(v)});return Object.values(g).map(l=>vchart(l[0].type,l)).join("")};
+A.gd=()=>{const d=window.drive;if(!d)return modal(head("Google Drive")+`<p>שירותי Firebase לא נטענו. בדקו חיבור לאינטרנט ופתחו מכתובת אתר מאושרת.</p>`);const n=d.pending();modal(head("שמירה ב-Google Drive")+`<p>${d.on()?"✅ מחובר. כל הנתונים והקבצים נשמרים בתיקיית <b>doctorflow</b> בדרייב שלכם ומסונכרנים בין מכשירים.":"כרגע הכול נשמר רק בטלפון. התחברו כדי לשמור הכול גם בתיקיית <b>doctorflow</b> בדרייב."}</p><p class="mu">${n} קבצים ממתינים להעלאה. ההתחברות תקפה כשעה, ואז צריך להתחבר שוב.</p><div class="row">${d.on()?B("gs","סנכרן עכשיו","ok")+B("go2","התנתק","g s"):B("gl","התחברות עם Google","ok")}</div>`)};
+A.gl=()=>drive.login();A.gs=()=>{drive.sync();A.cl()};A.go2=()=>{drive.logout();A.gd()};
+A.em=()=>{const e=document.body.classList.toggle("edit");$("#em").innerHTML=e?'<i class="fa-solid fa-check"></i> סיום עריכה':'<i class="fa-solid fa-pen"></i> עריכה'};
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+A.sm=()=>{setOpen=!setOpen;render()};
+function themeUi(){const d=document.documentElement.classList.contains("dark");$("#dmi").className="fa-solid fa-"+(d?"sun":"moon");$("#dml").textContent=d?"מצב בהיר":"מצב כהה"}
+A.dm=()=>{const d=document.documentElement.classList.toggle("dark");try{localStorage.setItem("medcentral_theme",d?"dark":"light")}catch(e){}themeUi()};
+A.ss=async()=>{const t=T($("#sh_t").value);for(const x of window.SH||[]){const id=await keep(x);t.docs.unshift({id,title:x.name,date:today(),type:x.type.startsWith("image/")?"צילום":"קובץ",size:(x.size/1024).toFixed(1)+" KB"})}save();window.SH=null;A.cl();toast("הקבצים נשמרו");window.drive&&drive.sync(1)};
+(async()=>{const m=location.search.match(/share=(\d+)/);if(!m||!+m[1])return;try{const c=await caches.open("medcentral-share"),fs=[];for(const k of await c.keys()){const r=await c.match(k),b=await r.blob();fs.push(new File([b],decodeURIComponent(r.headers.get("X-File-Name")||"file"),{type:b.type}))}history.replaceState(null,"",location.pathname);if(!fs.length)return;window.SH=fs;modal(head("קבצים ששותפו ("+fs.length+")")+`<div class="form"><label class="f">שמירה בתיק${sel("sh_t",S.topics.map(t=>[t.id,t.name]),S.tid||(S.topics[0]&&S.topics[0].id))}</label>${B("ss","שמור","ok")}</div>`)}catch(e){}})();
+themeUi();
+render();remind();
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+const app=initializeApp({apiKey:"AIzaSyDrIkfS6kR3zr6aYcIVhhuPTXVolgiQL0M",authDomain:"doctorreviews-e0496.firebaseapp.com",projectId:"doctorreviews-e0496",storageBucket:"doctorreviews-e0496.firebasestorage.app",messagingSenderId:"448697334361",appId:"1:448697334361:web:2b53aab5caede0c1f4cf48"});
+const auth=getAuth(app),API="https://www.googleapis.com/drive/v3/files",NAME="doctorflow";
+let tok=sessionStorage.getItem("mc-tok"),exp=+sessionStorage.getItem("mc-exp")||0,fid=localStorage.getItem("mc-fid");
+const on=()=>!!tok&&Date.now()<exp,H=()=>({Authorization:"Bearer "+tok}),items=()=>S.topics.flatMap(t=>[...t.docs,...t.appointments.flatMap(a=>a.files)]);
+async function J(u,o){const r=await fetch(u,o);if(!r.ok)throw new Error(r.status);return r}
+async function folder(){if(fid){try{const x=await(await J(API+"/"+fid+"?fields=trashed",{headers:H()})).json();if(!x.trashed)return fid}catch(e){}fid=null}
+const q=encodeURIComponent("name='"+NAME+"' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+const l=await(await J(API+"?q="+q+"&fields=files(id)",{headers:H()})).json();
+fid=l.files[0]?l.files[0].id:(await(await J(API,{method:"POST",headers:{...H(),"Content-Type":"application/json"},body:JSON.stringify({name:NAME,mimeType:"application/vnd.google-apps.folder"})})).json()).id;
+localStorage.setItem("mc-fid",fid);return fid}
+async function up(b,name){const p=await folder(),f=new FormData();f.append("metadata",new Blob([JSON.stringify({name,parents:[p]})],{type:"application/json"}));f.append("file",b);
+return(await(await J("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id",{method:"POST",headers:H(),body:f})).json()).id}
+async function sync(q){if(!on())return;let n=0;for(const d of items().filter(x=>!x.dv)){const b=await fget(d.id);if(!b)continue;try{d.dv=await up(b,d.title||d.name);n++}catch(e){if(!q)toast("שגיאה בהעלאה לדרייב");break}}if(n){save();render();toast(n+" קבצים נשמרו בדרייב")}}
+async function login(){const p=new GoogleAuthProvider();p.addScope("https://www.googleapis.com/auth/drive.file");try{const c=GoogleAuthProvider.credentialFromResult(await signInWithPopup(auth,p));tok=c.accessToken;exp=Date.now()+55*6e4;sessionStorage.setItem("mc-tok",tok);sessionStorage.setItem("mc-exp",exp);await folder();await pull();toast("מחובר ל-Google Drive");await sync();A.gd()}catch(e){toast("ההתחברות נכשלה: "+(e.code||e.message))}}
+let did=localStorage.getItem("mc-did"),pt;
+async function pull(){try{const p=await folder(),q=encodeURIComponent("name='medcentral-data.json' and '"+p+"' in parents and trashed=false"),l=await(await J(API+"?q="+q+"&fields=files(id)",{headers:H()})).json();did=l.files[0]?l.files[0].id:null;
+if(did){localStorage.setItem("mc-did",did);const r=await(await J(API+"/"+did+"?alt=media",{headers:H()})).json();if(r.topics&&(r.upd||0)>(S.upd||0)){const u={view:S.view,tid:S.tid,tab:S.tab,cal:S.cal,filter:S.filter};S=Object.assign(seed(),r,u);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast("הנתונים עודכנו מהדרייב");return}}await push(1)}catch(e){toast("שגיאה בקריאה מהדרייב")}}
+function push(now){if(!on())return;clearTimeout(pt);return new Promise(r=>{pt=setTimeout(async()=>{try{const b=new Blob([JSON.stringify(S)],{type:"application/json"});if(did)await J("https://www.googleapis.com/upload/drive/v3/files/"+did+"?uploadType=media",{method:"PATCH",headers:{...H(),"Content-Type":"application/json"},body:b});else{did=await up(b,"medcentral-data.json");localStorage.setItem("mc-did",did)}}catch(e){did=null}r()},now?0:1500)})}
+window.drive={on,login,sync,push,pending:()=>items().filter(x=>!x.dv).length,logout:()=>{signOut(auth);tok=null;sessionStorage.removeItem("mc-tok")},
+get:async id=>{const d=items().find(x=>x.id===id);if(!d||!d.dv||!on())return null;try{return await(await J(API+"/"+d.dv+"?alt=media",{headers:H()})).blob()}catch(e){return null}},
+del:id=>{const d=items().find(x=>x.id===id);if(d&&d.dv&&on())fetch(API+"/"+d.dv,{method:"DELETE",headers:H()}).catch(()=>{})}};
+if(on())pull();
+</script>
+</body>
+</html>
