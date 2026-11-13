@@ -115,15 +115,13 @@ const when=d=>{const n=daysTo(d);return n===0?"היום":n===1?"מחר":n>1?"ב�
 const uid=()=>Math.random().toString(36).slice(2,10);
 const cyc=cs=>{const t=today();let fut=false;for(const c of cs||[]){if(c.start&&c.start>t){fut=true;continue}if(!c.end||c.end>=t)return{on:1,l:c.end?"פעיל · נותרו "+(daysTo(c.end)+1)+" ימים":"פעיל (ללא הגבלה)"}}return fut?{on:0,l:"טרם החל"}:{on:0,l:"הסבב הסתיים"}};
 const D=",ד״ר ";
-function seed(){return{view:"dashboard",tid:null,tab:"h",cal:null,filter:"all",taken:{},meds:[],vitals:[{id:"v1",type:"לחץ דם",value:"120/80",date:add(-5),time:"09:00"}],topics:[
-{id:"knee",icon:"🦵",name:"כאבים ברגל ימין",appointments:[
-{id:"k1",kind:"specialist",doctor:"ד״ר אברהם לוי (אורתופד)",date:add(5),time:"10:30",location:"מרפאת מומחים, נתניה",preparation:"להגיע בצום של 8 שעות ולהביא צילומים קודמים",summary:"",notes:"להכין שאלות על הכאב בהליכה",files:[]},
-{id:"k2",kind:"lab",doctor:"מכון בדיקות דם",date:add(-40),time:"08:00",location:"",preparation:"צום של 8 שעות",summary:"מדדי הדלקת ירדו לנורמה.",notes:"",files:[{id:"f1",name:"תוצאות_בדיקות_דם.pdf",size:"1.2 MB"}]}],
-prescriptions:[{id:"p1",name:"אתופן 400mg",dosage:"כדור אחד ביום לאחר אוכל",doctor:"ד״ר לוי",cycles:[{id:"c1",start:add(-10),end:add(14)}]}],docs:[],notes:[{id:"n1",date:add(-3),text:"נפיחות קלה באזור הברך בערב."}]},
-{id:"eye",icon:"👁️",name:"מעקב עיניים",appointments:[{id:"e1",kind:"specialist",doctor:"ד״ר כהן (עיניים)",date:add(18),time:"11:00",location:"תל אביב",preparation:"להביא טופס 17 חתום",summary:"",notes:"",files:[]}],prescriptions:[{id:"p2",name:"טיפות הילו-קומוד",dosage:"3 פעמים ביום",doctor:"ד״ר כהן",cycles:[{id:"c2",start:add(-30),end:add(30)}]}],docs:[],notes:[]}]}}
+function seed(){return{view:"dashboard",tid:null,tab:"h",cal:null,filter:"all",taken:{},meds:[],vitals:[],topics:[]}}
+const arr=x=>Array.isArray(x)?x:[];
+function norm(r){const s=Object.assign(seed(),r||{});s.topics=arr(s.topics).filter(t=>t&&t.id).map(t=>({icon:"📁",name:"ללא שם",...t,appointments:arr(t.appointments).filter(a=>a&&a.id).map(a=>({kind:"specialist",doctor:"",date:today(),time:"",location:"",preparation:"",summary:"",notes:"",...a,files:arr(a.files)})),prescriptions:arr(t.prescriptions).filter(p=>p&&p.id).map(p=>({name:"",dosage:"",doctor:"",...p,cycles:arr(p.cycles)})),docs:arr(t.docs),notes:arr(t.notes)}));s.vitals=arr(s.vitals);s.meds=arr(s.meds);if(!s.taken||typeof s.taken!=="object")s.taken={};return s}
+const keepLocal=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 let S=load();
-function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.topics)return Object.assign(seed(),r)}catch(e){}return seed()}
-function save(){S.upd=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("לא ניתן לשמור: האחסון מלא או חסום")}window.drive&&drive.push()}
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.topics)return norm(r)}catch(e){}return seed()}
+function save(){S.upd=Date.now();try{localStorage.setItem("mc-pend","1")}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast("לא ניתן לשמור: האחסון מלא או חסום")}window.drive&&drive.push()}
 const T=id=>S.topics.find(t=>t.id===id);
 let DB;const dbp=new Promise(r=>{try{const q=indexedDB.open("mc-files",1);q.onupgradeneeded=()=>q.result.createObjectStore("f");q.onsuccess=()=>{DB=q.result;r()};q.onerror=()=>r()}catch(e){r()}});
 const fput=(id,b)=>new Promise(r=>{if(!DB)return r(0);try{const x=DB.transaction("f","readwrite");x.objectStore("f").put(b,id);x.oncomplete=()=>r(1);x.onerror=x.onabort=()=>r(0)}catch(e){r(0)}});
@@ -135,7 +133,7 @@ const B=(a,l,c,p,q)=>`<button class="btn ${c||""}" data-a="${a}" data-p="${esc(p
 const F=(l,id,v,t,ph)=>`<label class="f">${l}<input id="${id}" type="${t||"text"}" value="${esc(v)}" placeholder="${esc(ph)}"></label>`;
 const V=id=>$("#"+id).value.trim();
 const ups=()=>S.topics.flatMap(t=>t.appointments.filter(a=>upc(a.date,a.time)).map(a=>({t,a}))).sort((x,y)=>(x.a.date+x.a.time).localeCompare(y.a.date+y.a.time));
-function docsOf(t){const m=new Map();t.appointments.forEach(a=>a.files.forEach(f=>m.set(f.name,{id:f.id,title:f.name,date:a.date,type:"מתוך בדיקה",src:a.doctor,topic:t.name,tid:t.id})));t.docs.forEach(d=>{if(!m.has(d.title))m.set(d.title,{...d,topic:t.name,tid:t.id})});return[...m.values()].sort((a,b)=>b.date.localeCompare(a.date))}
+function docsOf(t){const m=new Map();t.appointments.forEach(a=>a.files.forEach(f=>m.set(f.id,{id:f.id,title:f.name,date:a.date,type:"מתוך בדיקה",src:a.doctor,topic:t.name,tid:t.id})));t.docs.forEach(d=>{if(!m.has(d.id))m.set(d.id,{...d,topic:t.name,tid:t.id})});return[...m.values()].sort((a,b)=>b.date.localeCompare(a.date))}
 function medsToday(){const m=new Map();S.topics.forEach(t=>t.prescriptions.forEach(p=>{if(cyc(p.cycles).on&&!m.has(p.name))m.set(p.name,{name:p.name,dosage:p.dosage,topic:t.name})}));S.meds.forEach(p=>{if(!m.has(p.name))m.set(p.name,{...p,topic:"אישי"})});return[...m.values()].map(x=>({...x,taken:!!S.taken[today()+"|"+x.name]}))}
 const empty=t=>`<p class="mu">${t}</p>`;
 const apptCard=({t,a},full)=>`<div class="it"><div class="row"><div><span class="pill">${kind(a.kind)}</span> <span class="pill ${upc(a.date,a.time)&&daysTo(a.date)<=1?"wn":""}">${when(a.date)}</span><div><b>${full?esc(t.name)+" · ":""}${esc(a.doctor)}</b></div>${a.location?`<div class="mu">📍 ${esc(a.location)}</div>`:""}</div><b>${he(a.date)} · ${a.time||""}</b></div>${a.preparation?`<div class="mu" style="margin-top:6px">⚠️ הכנה: ${esc(a.preparation)}</div>`:""}<div style="margin-top:8px">${B("oa","פרטים / עריכה","s",t.id,a.id)}</div></div>`;
@@ -162,7 +160,7 @@ function vitV(){return`<div class="card"><h3>מעקב מדדים</h3><div class=
 function notesV(){const ts=S.topics.filter(t=>t.notes.length);return`<div class="g3">${ts.map(t=>`<div class="card"><div class="row"><b>${esc(t.name)}</b>${B("go","פתח","g s","topic",t.id)}</div>${t.notes.map(n=>`<div class="it"><b>${he(n.date)}</b> ${esc(n.text)}</div>`).join("")}</div>`).join("")}</div>${ts.length?"":empty("אין פתקים. אפשר להוסיף יומן תסמינים בתוך כל תיק רפואי.")}`}
 function docsV(){const all=S.topics.flatMap(docsOf).sort((a,b)=>b.date.localeCompare(a.date));return`<div class="card"><h3>${all.length} מסמכים</h3>${all.map(d=>`<div class="it row"><div><b>${esc(d.title)}</b><div class="mu">${heL(d.date)} · ${esc(d.topic)}${d.src?" · "+esc(d.src):""}</div></div><span class="pill">${esc(d.type)}</span></div>`).join("")||empty("אין מסמכים")}<p class="mu">שימו לב: נשמר שם הקובץ בלבד, לא תוכנו. את הקובץ עצמו כדאי לשמור בנפרד.</p></div>`}
 function topicV(){const t=T(S.tid);if(!t)return dash();const tab=S.tab||"h";let b="";
-if(tab==="h")b=`<div class="row"><span class="mu">תורים ובדיקות</span>${B("na","+ תור חדש","s",t.id)}</div>`+[...t.appointments].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>apptCard({t,a})).join("")||empty("אין תורים");
+if(tab==="h")b=`<div class="row"><span class="mu">תורים ובדיקות</span>${B("na","+ תור חדש","s",t.id)}</div>`+([...t.appointments].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>apptCard({t,a})).join("")||empty("אין תורים"));
 else if(tab==="r")b=`<div class="row"><span></span>${B("rx","+ מרשם","ok s",t.id)}</div>`+(t.prescriptions.map(p=>`<div class="it done"><div class="row"><b>${esc(p.name)}</b>${B("dr","מחק","dg s",t.id,p.id)}</div>${esc(p.dosage)} · ${esc(p.doctor)}<div class="mu">${p.cycles.map(c=>he(c.start||"")+" – "+(he(c.end)||"ללא הגבלה")).join(" | ")}</div></div>`).join("")||empty("אין מרשמים"));
 else if(tab==="d")b=`<div class="row"><span class="mu">מסמכים וצילומים</span><span><label class="btn s">העלה קובץ<input type="file" hidden data-c="doc" data-p="${t.id}"></label> <label class="btn ok s">צלם<input type="file" accept="image/*" capture="environment" hidden data-c="doc" data-p="${t.id}"></label></span></div>`+(docsOf(t).map(docRow).join("")||empty("לא צורפו מסמכים"));
 else b=`<div class="row" style="flex-wrap:nowrap"><input id="nt" placeholder="תארו את התסמין…">${B("an","שמור","",t.id)}</div><div style="margin-top:8px">`+(t.notes.map(n=>`<div class="it row"><span><b>${he(n.date)}</b> ${esc(n.text)}</span>${B("dn","מחק","dg s",t.id,n.id)}</div>`).join("")||empty("אין פתקים"))+"</div>";
@@ -181,11 +179,11 @@ function modal(h){$("#modal").innerHTML=`<div class="ov" data-a="cl" data-e="1">
 function head(t){return`<div class="row" style="margin-bottom:10px"><h3 style="margin:0">${t}</h3>${B("cl","סגור","g s")}</div>`}
 const sel=(id,arr,cur)=>`<select id="${id}">${arr.map(([v,l])=>`<option value="${esc(v)}" ${v===cur?"selected":""}>${esc(l)}</option>`).join("")}</select>`;
 const A={};
-A.go=(v,p)=>{if(v==="topic"){S.view="topic";S.tid=p}else{S.view=v;S.tid=null}$("#q").value="";side(0);save();render()};
+A.go=(v,p)=>{if(v==="topic"){S.view="topic";S.tid=p}else{S.view=v;S.tid=null}$("#q").value="";side(0);keepLocal();render()};
 function side(o){$("#side").classList.toggle("open",!!+o);$("#scrim").classList.toggle("hide",!+o)}
 A.side=p=>side(p);A.tab=p=>{S.tab=p;render()};A.flt=p=>{S.filter=p;render()};
 A.cm=p=>{const b=S.cal||today().slice(0,7)+"-01",[y,m]=b.split("-").map(Number);const d=+p?new Date(y,m-1+ +p,1):new Date();S.cal=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-01";render()};
-A.cl=(p,q,b,e)=>{if(b.dataset.e&&e.target!==b)return;$("#modal").innerHTML="";render()};
+A.cl=(p,q,b,e)=>{if(b&&b.dataset&&b.dataset.e&&e&&e.target!==b)return;$("#modal").innerHTML="";render()};
 A.pr=()=>window.print();
 A.tm=n=>{const k=today()+"|"+n;S.taken[k]=!S.taken[k];save();render()};
 A.qm=()=>modal(head("הוספת כדור")+`<div class="form">${F("שם","qn","")}${F("מינון","qd","","text","לפי צורך")}${B("sq","שמור","ok")}</div>`);
@@ -207,19 +205,21 @@ A.sy=(tid,pid)=>{T(tid).prescriptions.find(p=>p.id===pid).cycles.push({id:uid(),
 A.av=()=>{const t=V("v0"),v=V("v1");if(!t||!v)return toast("נא למלא סוג וערך");S.vitals.unshift({id:uid(),type:t,value:v,date:$("#v2").value||today(),time:$("#v3").value||nowT()});save();render();toast("המדד נשמר")};
 A.an=tid=>{const x=V("nt");if(!x)return;T(tid).notes.unshift({id:uid(),date:today(),text:x});save();render();toast("הפתק נשמר")};
 function arm(b){if(b.dataset.arm){return true}b.dataset.arm=1;const o=b.textContent;b.textContent="לחצו שוב לאישור";setTimeout(()=>{delete b.dataset.arm;b.textContent=o},3000);return false}
+const purge=fs=>arr(fs).forEach(f=>{window.drive&&drive.del(f.id);fdel(f.id)});
 const D2=(f)=>(p,q,b)=>{if(arm(b)){f(p,q);save();A.cl();toast("נמחק")}};
-A.da=D2((t,a)=>{const x=T(t);x.appointments=x.appointments.filter(i=>i.id!==a)});
+A.da=D2((t,a)=>{const x=T(t);purge((x.appointments.find(i=>i.id===a)||{}).files);x.appointments=x.appointments.filter(i=>i.id!==a)});
 A.dr=D2((t,p)=>{if(t){const x=T(t);x.prescriptions=x.prescriptions.filter(i=>i.id!==p)}else S.meds=S.meds.filter(i=>i.id!==p)});
 A.dn=D2((t,n)=>{const x=T(t);x.notes=x.notes.filter(i=>i.id!==n)});
 A.dv=D2((p)=>{S.vitals=S.vitals.filter(i=>i.id!==p)});
-A.dt=D2((t)=>{S.topics=S.topics.filter(i=>i.id!==t);S.view="dashboard";S.tid=null});
-A.bk=()=>modal(head("גיבוי ושחזור")+`<p class="mu">לגיבוי: העתיקו את הטקסט ושמרו אותו בקובץ או בהודעה לעצמכם. לשחזור: הדביקו טקסט גיבוי (גם מהגרסה הישנה) ולחצו ״שחזר״. השחזור מחליף את הנתונים הנוכחיים.</p><textarea id="bj" style="min-height:200px;direction:ltr">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:10px">${B("bc","העתק גיבוי","ok")}${B("br","שחזר מהטקסט","wn")}</div>`);
+A.dt=D2((t)=>{const x=T(t);if(x){purge(x.docs);x.appointments.forEach(a=>purge(a.files))}S.topics=S.topics.filter(i=>i.id!==t);S.view="dashboard";S.tid=null});
+A.bk=()=>modal(head("גיבוי ושחזור")+`<p class="mu">לגיבוי: העתיקו את הטקסט ושמרו אותו בקובץ או בהודעה לעצמכם. לשחזור: הדביקו טקסט גיבוי (גם מהגרסה הישנה) ולחצו ״שחזר״. השחזור מחליף את הנתונים הנוכחיים. שימו לב: הגיבוי כולל את הרשומות בלבד, לא את הקבצים עצמם (הם נשמרים במכשיר ובדרייב).</p><textarea id="bj" style="min-height:200px;direction:ltr">${esc(JSON.stringify(S))}</textarea><div class="row" style="margin-top:10px">${B("bd","הורד קובץ","ok")}${B("bc","העתק טקסט","g s")}<label class="btn g s">טען מקובץ<input type="file" accept=".json" hidden data-c="bkf"></label>${B("br","שחזר מהטקסט","wn")}</div>`);
+A.bd=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:"application/json"})),a=document.createElement("a");a.href=u;a.download="medcentral_backup_"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(u),1e4)};
 A.bc=()=>{const e=$("#bj");e.select();try{document.execCommand("copy");toast("הועתק")}catch(x){toast("סמנו והעתיקו ידנית")}};
-A.br=(p,q,b)=>{if(!arm(b))return;try{const r=JSON.parse($("#bj").value);if(!r.topics)throw 0;S=Object.assign(seed(),r);save();A.cl();toast("הנתונים שוחזרו")}catch(e){toast("הטקסט אינו גיבוי תקין")}};
+A.br=(p,q,b)=>{if(!arm(b))return;try{const r=JSON.parse($("#bj").value);if(!r.topics)throw 0;S=norm(r);save();A.cl();toast("הנתונים שוחזרו")}catch(e){toast("הטקסט אינו גיבוי תקין")}};
 A.notif=async()=>{if(!("Notification"in window))return toast("הדפדפן לא תומך בהתראות");const r=await Notification.requestPermission();if(r!=="granted")return toast("ההתראות לא אושרו");toast("תוזכרו כשהאפליקציה פתוחה");remind()};
 function remind(){if(!("Notification"in window)||Notification.permission!=="granted")return;ups().filter(x=>daysTo(x.a.date)<=1).forEach(x=>{try{new Notification("תזכורת: "+when(x.a.date)+" "+x.a.time,{body:x.a.doctor+(x.a.preparation?" — "+x.a.preparation:"")})}catch(e){}})}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||!A[b.dataset.a])return;A[b.dataset.a](b.dataset.p,b.dataset.q,b,e)});
-document.addEventListener("change",async e=>{const i=e.target;if(!i.dataset.c||!i.files.length)return;const f=[...i.files],t=T(i.dataset.p);
+document.addEventListener("change",async e=>{const i=e.target;if(!i.dataset.c||!i.files.length)return;if(i.dataset.c==="bkf"){try{const r=JSON.parse(await i.files[0].text());if(!r.topics)throw 0;if(!confirm("השחזור מחליף את הנתונים הנוכחיים. להמשיך?"))return;S=norm(r);save();A.cl();toast("הנתונים שוחזרו")}catch(x){toast("הקובץ אינו גיבוי תקין")}return}const f=[...i.files],t=T(i.dataset.p);
 if(i.dataset.c==="doc"){for(const x of f){const id=await keep(x);t.docs.unshift({id,title:x.name,date:today(),type:x.type.startsWith("image/")?"צילום":"קובץ",size:(x.size/1024).toFixed(1)+" KB"})}save();render();toast("הקובץ נשמר במכשיר")}
 else{const a=t.appointments.find(x=>x.id===i.dataset.q);for(const x of f){const id=await keep(x);a.files.push({id,name:x.name,size:(x.size/1024).toFixed(1)+" KB"})}save();A.oa(i.dataset.p,i.dataset.q);toast("הקובץ נשמר במכשיר")}window.drive&&drive.sync(1)});
 $("#q").addEventListener("input",render);
@@ -241,17 +241,18 @@ if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch((
 A.sm=()=>{setOpen=!setOpen;render()};
 function themeUi(){const d=document.documentElement.classList.contains("dark");$("#dmi").className="fa-solid fa-"+(d?"sun":"moon");$("#dml").textContent=d?"מצב בהיר":"מצב כהה"}
 A.dm=()=>{const d=document.documentElement.classList.toggle("dark");try{localStorage.setItem("medcentral_theme",d?"dark":"light")}catch(e){}themeUi()};
-A.ss=async()=>{const t=T($("#sh_t").value);for(const x of window.SH||[]){const id=await keep(x);t.docs.unshift({id,title:x.name,date:today(),type:x.type.startsWith("image/")?"צילום":"קובץ",size:(x.size/1024).toFixed(1)+" KB"})}save();window.SH=null;A.cl();toast("הקבצים נשמרו");window.drive&&drive.sync(1)};
+A.ss=async()=>{const t=T($("#sh_t").value);if(!t){toast("צרו קודם תיק רפואי");A.cl();return A.nt()}for(const x of window.SH||[]){const id=await keep(x);t.docs.unshift({id,title:x.name,date:today(),type:x.type.startsWith("image/")?"צילום":"קובץ",size:(x.size/1024).toFixed(1)+" KB"})}save();window.SH=null;A.cl();toast("הקבצים נשמרו");window.drive&&drive.sync(1)};
 (async()=>{const m=location.search.match(/share=(\d+)/);if(!m||!+m[1])return;try{const c=await caches.open("medcentral-share"),fs=[];for(const k of await c.keys()){const r=await c.match(k),b=await r.blob();fs.push(new File([b],decodeURIComponent(r.headers.get("X-File-Name")||"file"),{type:b.type}))}history.replaceState(null,"",location.pathname);if(!fs.length)return;window.SH=fs;modal(head("קבצים ששותפו ("+fs.length+")")+`<div class="form"><label class="f">שמירה בתיק${sel("sh_t",S.topics.map(t=>[t.id,t.name]),S.tid||(S.topics[0]&&S.topics[0].id))}</label>${B("ss","שמור","ok")}</div>`)}catch(e){}})();
+["oa","rx"].forEach(k=>{const f=A[k];A[k]=(...a)=>{if(!S.topics.length){toast("צרו קודם תיק רפואי");return A.nt()}return f(...a)}});
 themeUi();
 render();remind();
 </script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import{getAuth,GoogleAuthProvider,signInWithPopup,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getAuth,GoogleAuthProvider,signInWithRedirect,getRedirectResult,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 const app=initializeApp({apiKey:"AIzaSyDrIkfS6kR3zr6aYcIVhhuPTXVolgiQL0M",authDomain:"doctorreviews-e0496.firebaseapp.com",projectId:"doctorreviews-e0496",storageBucket:"doctorreviews-e0496.firebasestorage.app",messagingSenderId:"448697334361",appId:"1:448697334361:web:2b53aab5caede0c1f4cf48"});
 const auth=getAuth(app),API="https://www.googleapis.com/drive/v3/files",NAME="doctorflow";
-let tok=sessionStorage.getItem("mc-tok"),exp=+sessionStorage.getItem("mc-exp")||0,fid=localStorage.getItem("mc-fid");
+let tok=localStorage.getItem("mc-tok"),exp=+localStorage.getItem("mc-exp")||0,fid=localStorage.getItem("mc-fid");
 const on=()=>!!tok&&Date.now()<exp,H=()=>({Authorization:"Bearer "+tok}),items=()=>S.topics.flatMap(t=>[...t.docs,...t.appointments.flatMap(a=>a.files)]);
 async function J(u,o){const r=await fetch(u,o);if(!r.ok)throw new Error(r.status);return r}
 async function folder(){if(fid){try{const x=await(await J(API+"/"+fid+"?fields=trashed",{headers:H()})).json();if(!x.trashed)return fid}catch(e){}fid=null}
@@ -262,15 +263,17 @@ localStorage.setItem("mc-fid",fid);return fid}
 async function up(b,name){const p=await folder(),f=new FormData();f.append("metadata",new Blob([JSON.stringify({name,parents:[p]})],{type:"application/json"}));f.append("file",b);
 return(await(await J("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id",{method:"POST",headers:H(),body:f})).json()).id}
 async function sync(q){if(!on())return;let n=0;for(const d of items().filter(x=>!x.dv)){const b=await fget(d.id);if(!b)continue;try{d.dv=await up(b,d.title||d.name);n++}catch(e){if(!q)toast("שגיאה בהעלאה לדרייב");break}}if(n){save();render();toast(n+" קבצים נשמרו בדרייב")}}
-async function login(){const p=new GoogleAuthProvider();p.addScope("https://www.googleapis.com/auth/drive.file");try{const c=GoogleAuthProvider.credentialFromResult(await signInWithPopup(auth,p));tok=c.accessToken;exp=Date.now()+55*6e4;sessionStorage.setItem("mc-tok",tok);sessionStorage.setItem("mc-exp",exp);await folder();await pull();toast("מחובר ל-Google Drive");await sync();A.gd()}catch(e){toast("ההתחברות נכשלה: "+(e.code||e.message))}}
+async function login(){const p=new GoogleAuthProvider();p.addScope("https://www.googleapis.com/auth/drive.file");try{await signInWithRedirect(auth,p)}catch(e){toast("ההתחברות נכשלה: "+(e.code||e.message))}}
 let did=localStorage.getItem("mc-did"),pt;
-async function pull(){try{const p=await folder(),q=encodeURIComponent("name='medcentral-data.json' and '"+p+"' in parents and trashed=false"),l=await(await J(API+"?q="+q+"&fields=files(id)",{headers:H()})).json();did=l.files[0]?l.files[0].id:null;
-if(did){localStorage.setItem("mc-did",did);const r=await(await J(API+"/"+did+"?alt=media",{headers:H()})).json();if(r.topics&&(r.upd||0)>(S.upd||0)){const u={view:S.view,tid:S.tid,tab:S.tab,cal:S.cal,filter:S.filter};S=Object.assign(seed(),r,u);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast("הנתונים עודכנו מהדרייב");return}}await push(1)}catch(e){toast("שגיאה בקריאה מהדרייב")}}
-function push(now){if(!on())return;clearTimeout(pt);return new Promise(r=>{pt=setTimeout(async()=>{try{const b=new Blob([JSON.stringify(S)],{type:"application/json"});if(did)await J("https://www.googleapis.com/upload/drive/v3/files/"+did+"?uploadType=media",{method:"PATCH",headers:{...H(),"Content-Type":"application/json"},body:b});else{did=await up(b,"medcentral-data.json");localStorage.setItem("mc-did",did)}}catch(e){did=null}r()},now?0:1500)})}
-window.drive={on,login,sync,push,pending:()=>items().filter(x=>!x.dv).length,logout:()=>{signOut(auth);tok=null;sessionStorage.removeItem("mc-tok")},
+async function pull(q){try{const p=await folder(),q=encodeURIComponent("name='medcentral-data.json' and '"+p+"' in parents and trashed=false"),l=await(await J(API+"?q="+q+"&fields=files(id)&orderBy=modifiedTime%20desc",{headers:H()})).json();did=l.files[0]?l.files[0].id:null;
+if(did){localStorage.setItem("mc-did",did);const r=await(await J(API+"/"+did+"?alt=media",{headers:H()})).json();if(r.topics&&(r.upd||0)>(S.upd||0)){if(localStorage.getItem("mc-pend")){if(q)return;if(!confirm("יש שינויים שלא סונכרנו במכשיר, ובדרייב יש גרסה חדשה יותר. להחליף את נתוני המכשיר בנתוני הדרייב?")){await push(1);return}}const u={view:S.view,tid:S.tid,tab:S.tab,cal:S.cal,filter:S.filter};S=norm({...r,...u});localStorage.removeItem("mc-pend");try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render();toast("הנתונים עודכנו מהדרייב");return}}if(!q||localStorage.getItem("mc-pend"))await push(1)}catch(e){if(!q)toast("שגיאה בקריאה מהדרייב")}}
+function push(now){if(!on())return;clearTimeout(pt);return new Promise(r=>{pt=setTimeout(async()=>{try{const b=new Blob([JSON.stringify(S)],{type:"application/json"});if(did)await J("https://www.googleapis.com/upload/drive/v3/files/"+did+"?uploadType=media",{method:"PATCH",headers:{...H(),"Content-Type":"application/json"},body:b});else{did=await up(b,"medcentral-data.json");localStorage.setItem("mc-did",did)}localStorage.removeItem("mc-pend")}catch(e){toast("שגיאת סנכרון, ננסה שוב בהמשך")}r()},now?0:1500)})}
+window.drive={on,login,sync,push,pending:()=>items().filter(x=>!x.dv).length,logout:()=>{signOut(auth);tok=null;localStorage.removeItem("mc-tok")},
 get:async id=>{const d=items().find(x=>x.id===id);if(!d||!d.dv||!on())return null;try{return await(await J(API+"/"+d.dv+"?alt=media",{headers:H()})).blob()}catch(e){return null}},
 del:id=>{const d=items().find(x=>x.id===id);if(d&&d.dv&&on())fetch(API+"/"+d.dv,{method:"DELETE",headers:H()}).catch(()=>{})}};
-if(on())pull();
+getRedirectResult(auth).then(async r=>{if(!r)return;const c=GoogleAuthProvider.credentialFromResult(r);tok=c.accessToken;exp=Date.now()+55*6e4;localStorage.setItem("mc-tok",tok);localStorage.setItem("mc-exp",exp);try{await folder();await pull();await sync();toast("מחובר ל-Google Drive");render()}catch(e){toast("שגיאת סנכרון")}}).catch(e=>toast("ההתחברות נכשלה: "+(e.code||e.message)));
+if(on())pull(1);render();
+const chk=()=>{if(document.hidden)return;if(on())pull(1);else if(tok&&!window.__x){window.__x=1;toast("הסנכרון פג, התחברו שוב בהגדרות");render()}};setInterval(chk,30000);document.addEventListener("visibilitychange",chk);
 </script>
 </body>
 </html>
