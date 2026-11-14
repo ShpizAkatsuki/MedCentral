@@ -1,6 +1,6 @@
 // MedCentral service worker - עובד גם בלי רשת.
 // קבצי האפליקציה: קודם רשת (כדי לקבל עדכונים), ואם אין רשת - מהמטמון. ספריות חיצוניות: מטמון קודם.
-const CACHE = 'medcentral-v2';
+const CACHE = 'medcentral-v3';
 const SHARE_CACHE = 'medcentral-share';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 const CDN = ['cdnjs.cloudflare.com', 'fonts.googleapis.com', 'fonts.gstatic.com', 'www.gstatic.com'];
